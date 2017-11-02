@@ -37,18 +37,35 @@ ALLOWED_COMMANDS = [
 ]
 
 def rpc_proxy_class(config_data):
+    """
+    Generates an RPCProxy request handler provided a given
+    config file.
+    """
 
     rpcuri = 'http://{}:{}'.format(config_data.get('rpchost'), config_data.get('rpcport'))
 
     class RpcProxy(BaseHTTPRequestHandler):
-        def _set_headers(self):
+        """
+        Passes through data to JSON-RPC provided it is
+        JSON decodable and allowed (stateless and unpriveleged)
+        """
+
+        def respond(self, data):
+            """
+            Sends data and a 200 OK response.
+            """
             self.send_response(200)
-            self.send_header('Content-type', 'application/json')
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(data)))
             self.end_headers()
+            self.wfile.write(data)
 
         def respond_with_json(self, obj):
+            """
+            Sends JSON and a 200 OK repsonse.
+            """
             out = json.dumps(obj).encode()
-            self.wfile.write(out)
+            self.respond(out)
 
         def bad_request(self, err):
             """
@@ -80,19 +97,20 @@ def rpc_proxy_class(config_data):
                 return self.forbidden(json_data.get('method'))
             response = requests.get(rpcuri, headers={'content-type': 'application/json'}, data=raw_data, auth=(config_data.get('rpcusername'), config_data.get('rpcpassword')))
 
-            self._set_headers()
             self.respond_with_json(response.json())
     return RpcProxy
 
 
 def run(config_data):
+    """
+    Runs the server given a config file.
+    """
     server_address = (config_data['host'], config_data['port'])
     httpd = HTTPServer(server_address, rpc_proxy_class(config_data))
     print('Starting rpc proxy...')
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    from sys import argv
     with open('config.json', 'r') as config_file:
         config_data = json.load(config_file)
         run(config_data)
