@@ -37,6 +37,7 @@ Only a subset of the Phore RPC commands are allowed to be used to prevent develo
 - masternodelist
 - getrawtransaction
 - sendrawtransaction
+- searchrawtransactions
 - estimatefee
 - estimatepriority
 
