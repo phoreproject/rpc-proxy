@@ -33,7 +33,8 @@ ALLOWED_COMMANDS = [
     'getrawtransaction',
     'sendrawtransaction',
     'estimatefee',
-    'estimatepriority'
+    'estimatepriority',
+    'searchrawtransactions'
 ]
 
 def rpc_proxy_class(config_data):
@@ -109,6 +110,7 @@ def run(config_data):
     server_address = (config_data['host'], config_data['port'])
     httpd = HTTPServer(server_address, rpc_proxy_class(config_data))
     print('Starting rpc proxy...')
+    print('Running on %s:%s' % (server_address[0], server_address[1]))
     httpd.serve_forever()
 
 if __name__ == "__main__":
