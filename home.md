@@ -44,3 +44,19 @@ If you try to access a method not in this list, the proxy will return:
 ```json
 {"err": "Forbidden to run command \"badcommand\""}
 ```
+
+## Websockets
+
+Websockets are also supported and allow for notifications based on new blocks, transactions, and bloom filters.
+
+#### `subscribeBloom <bloomFilter> [includeMempool=false]`
+This command will subscribe to any transactions that are included in the bloom filter provided.
+
+#### `subscribeAddress <address> [includeMempool=false]`
+This command will subscribe to a certain address.
+
+#### `subscribeBlock`
+This command will subscribe to any blocks that are staked.
+
+#### `unsubscribeAll`
+This command will cancel any subscriptions currently active.
