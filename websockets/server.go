@@ -75,7 +75,7 @@ func (c *Client) readPump() {
 			subscribeBloom(c, strings.Split(msg, " ")[1:])
 		case strings.HasPrefix(msg, "subscribeAddress"):
 			args := strings.Split(msg, " ")[1:]
-			subscribeAddress(c, args[0], !(args[1] == "false" || args[1] == "0" || args[1] == "no"))
+			subscribeAddress(c, args[0], args[1])
 		case strings.HasPrefix(msg, "subscribeBlock"):
 			subscribeBlock(c)
 		case strings.HasPrefix(msg, "unsubscribeAll"):

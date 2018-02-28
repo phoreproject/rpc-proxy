@@ -9,18 +9,32 @@ import (
 	"github.com/phoreproject/btcutil/bloom"
 )
 
-func subscribeBloom(client *Client, args []string) error {
-	// Syntax: subscribeBloom <filter> <hashfuncs> <tweak> [flags=UpdateNone]
+// IncludeTransaction is whether to include mempool transactions, confirmed transactions, or all
+type IncludeTransaction int
 
-	if len(args) < 3 || len(args) > 4 {
+const (
+	// IncludeAllTransactions - Include both confirmed and mempool transactions
+	IncludeAllTransactions = IncludeTransaction(iota)
+
+	// IncludeMempoolTransactions - Include only mempool transactions
+	IncludeMempoolTransactions = IncludeTransaction(iota)
+
+	// IncludeConfirmedTransactions - Include only confirmed transaction
+	IncludeConfirmedTransactions = IncludeTransaction(iota)
+)
+
+func subscribeBloom(client *Client, args []string) error {
+	// Syntax: subscribeBloom <filter> <hashfuncs> <tweak> <includeMempoolTransactions> [flags=UpdateNone]
+
+	if len(args) < 4 || len(args) > 5 {
 		return errors.New("Incorrect number of arguments")
 	}
 
 	flags := wire.BloomUpdateNone
-	if len(args) == 3 {
+	if len(args) == 5 {
 		flags = wire.BloomUpdateNone
 	} else {
-		flagsInt, err := strconv.Atoi(args[3])
+		flagsInt, err := strconv.Atoi(args[4])
 		if err != nil {
 			return errors.New("Could not parse update flags")
 		}
@@ -45,6 +59,14 @@ func subscribeBloom(client *Client, args []string) error {
 	}
 	tweak := uint32(tweakInt)
 
+	transactions, err := strconv.Atoi(args[3])
+	if err != nil {
+		return errors.New("Could not parse includeMempoolTransactions")
+	}
+	if transactions > 2 || transactions < 0 {
+		return errors.New("Could not parse includeMempoolTransactions")
+	}
+
 	filter := bloom.LoadFilter(&wire.MsgFilterLoad{
 		Filter:    bloomBytes,
 		HashFuncs: hashFuncs,
@@ -57,10 +79,17 @@ func subscribeBloom(client *Client, args []string) error {
 }
 
 // SubscribeAddress is used for a client to subscribe to any events happening to an address
-func subscribeAddress(client *Client, addr string, mempool bool) {
-	// fmt.Println("One new address registered", client, addr)
-	register := RegisterAddress{client: client, address: addr, mempool: mempool}
+func subscribeAddress(client *Client, addr string, transactionType string) error {
+	transaction, err := strconv.Atoi(transactionType)
+	if err != nil {
+		return err
+	}
+	if transaction < 0 || transaction > 3 {
+		return errors.New("Incorrect value for includeMempoolTransaction")
+	}
+	register := RegisterAddress{client: client, address: addr, mempool: IncludeTransaction(transaction)}
 	client.Hub.registerAddress <- register
+	return nil
 }
 
 func subscribeBlock(client *Client) {

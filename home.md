@@ -49,10 +49,15 @@ If you try to access a method not in this list, the proxy will return:
 
 Websockets are also supported and allow for notifications based on new blocks, transactions, and bloom filters.
 
-#### `subscribeBloom <bloomFilter> [includeMempool=false]`
+## IncludeTransaction type
+- `0`: include all transactions
+- `1`: include only transactions just added to the mempool, but not confirmed
+- `2`: include only confirmed transactions
+
+#### `subscribeBloom <filterHex> <hashfuncs> <tweak> <includeMempoolTransactions> [flags=UpdateNone]`
 This command will subscribe to any transactions that are included in the bloom filter provided.
 
-#### `subscribeAddress <address> [includeMempool=false]`
+#### `subscribeAddress <address> <includeMempool>`
 This command will subscribe to a certain address.
 
 #### `subscribeBlock`

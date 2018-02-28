@@ -14,14 +14,14 @@ import (
 type RegisterAddress struct {
 	client  *Client
 	address string
-	mempool bool
+	mempool IncludeTransaction
 }
 
 // RegisterBloom is a channel message used to register a bloom filter
 type RegisterBloom struct {
 	client  *Client
 	bloom   *bloom.Filter
-	mempool bool
+	mempool IncludeTransaction
 }
 
 // BroadcastAddressMessage used to receive message of addresses
@@ -88,16 +88,22 @@ func (h *Hub) Run() {
 			h.subscribedToBlocks[client] = true
 		case registerAddress := <-h.registerAddress:
 			addr := registerAddress.address
-			if registerAddress.mempool {
+			if registerAddress.mempool == IncludeAllTransactions {
 				h.subscribedToAddressMempool[addr] = append(h.subscribedToAddressMempool[addr], registerAddress.client)
-			} else {
 				h.subscribedToAddress[addr] = append(h.subscribedToAddress[addr], registerAddress.client)
+			} else if registerAddress.mempool == IncludeConfirmedTransactions {
+				h.subscribedToAddress[addr] = append(h.subscribedToAddress[addr], registerAddress.client)
+			} else {
+				h.subscribedToAddressMempool[addr] = append(h.subscribedToAddressMempool[addr], registerAddress.client)
 			}
 		case registerBloom := <-h.registerBloom:
-			if registerBloom.mempool {
+			if registerBloom.mempool == IncludeAllTransactions {
 				h.subscribedToBloomMempool[registerBloom.client] = registerBloom.bloom
-			} else {
 				h.subscribedToBloom[registerBloom.client] = registerBloom.bloom
+			} else if registerBloom.mempool == IncludeConfirmedTransactions {
+				h.subscribedToBloom[registerBloom.client] = registerBloom.bloom
+			} else {
+				h.subscribedToBloomMempool[registerBloom.client] = registerBloom.bloom
 			}
 		case client := <-h.unsubscribeAll:
 			if _, ok := h.subscribedToBlocks[client]; ok {

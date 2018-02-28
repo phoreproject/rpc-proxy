@@ -17,8 +17,8 @@ import (
 	"github.com/phoreproject/rpc-proxy/websockets"
 )
 
-// ALLOWED_COMMANDS should not carry state, require sensitive information, or send sensitive data.
-var ALLOWED_COMMANDS = map[string]struct{}{
+// AllowedCommands should not carry state, require sensitive information, or send sensitive data.
+var AllowedCommands = map[string]struct{}{
 	"getbestblockhash":   struct{}{},
 	"getblock":           struct{}{},
 	"getblockchaininfo":  struct{}{},
@@ -113,7 +113,7 @@ func main() {
 			return
 		}
 
-		if _, ok := ALLOWED_COMMANDS[request.Method]; !ok {
+		if _, ok := AllowedCommands[request.Method]; !ok {
 			w.WriteHeader(403)
 			w.Write([]byte("cannot use command " + request.Method))
 			return
