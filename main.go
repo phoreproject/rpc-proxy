@@ -92,10 +92,7 @@ func main() {
 			return
 		}
 		type RPCRequest struct {
-			JSONRPC string   `json:"jsonrpc"`
-			Method  string   `json:"method"`
-			Params  []string `json:"params"`
-			ID      int      `json:"id"`
+			Method string `json:"method"`
 		}
 		s := make([]byte, r.ContentLength)
 		_, err := io.ReadFull(r.Body, s)
