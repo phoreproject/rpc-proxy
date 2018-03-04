@@ -74,7 +74,7 @@ func subscribeBloom(client *Client, args []string) error {
 		Flags:     flags,
 	})
 
-	client.Hub.registerBloom <- RegisterBloom{client: client, bloom: filter}
+	client.Hub.registerBloom <- RegisterBloom{client: client, bloom: filter, mempool: IncludeTransaction(transactions)}
 	return nil
 }
 
