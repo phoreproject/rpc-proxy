@@ -31,7 +31,7 @@ func subscribeBloom(client *Client, args []string) error {
 	}
 
 	flags := wire.BloomUpdateNone
-	if len(args) == 5 {
+	if len(args) < 5 {
 		flags = wire.BloomUpdateNone
 	} else {
 		flagsInt, err := strconv.Atoi(args[4])
