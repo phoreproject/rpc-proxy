@@ -120,6 +120,7 @@ func main() {
 		req, err := http.NewRequest("POST", "http://"+*host+"/", bytes.NewReader(s))
 		req.SetBasicAuth(*user, *pass)
 		res, err := httpClient.Do(req)
+        defer res.Close()
 
 		if err != nil {
 			w.WriteHeader(500)
