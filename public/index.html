@@ -35,9 +35,15 @@
 <div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span><span class="dt">&quot;err&quot;</span><span class="fu">:</span> <span class="st">&quot;Forbidden to run command </span><span class="ch">\&quot;</span><span class="st">badcommand</span><span class="ch">\&quot;</span><span class="st">&quot;</span><span class="fu">}</span></code></pre></div>
 <h2 id="websockets">Websockets</h2>
 <p>Websockets are also supported and allow for notifications based on new blocks, transactions, and bloom filters.</p>
-<h4 id="subscribebloom-bloomfilter-includemempoolfalse"><code>subscribeBloom &lt;bloomFilter&gt; [includeMempool=false]</code></h4>
+<h2 id="includetransaction-type">IncludeTransaction type</h2>
+<ul>
+<li><code>0</code>: include all transactions</li>
+<li><code>1</code>: include only transactions just added to the mempool, but not confirmed</li>
+<li><code>2</code>: include only confirmed transactions</li>
+</ul>
+<h4 id="subscribebloom-filterhex-hashfuncs-tweak-includemempooltransactions-flagsupdatenone"><code>subscribeBloom &lt;filterHex&gt; &lt;hashfuncs&gt; &lt;tweak&gt; &lt;includeMempoolTransactions&gt; [flags=UpdateNone]</code></h4>
 <p>This command will subscribe to any transactions that are included in the bloom filter provided.</p>
-<h4 id="subscribeaddress-address-includemempoolfalse"><code>subscribeAddress &lt;address&gt; [includeMempool=false]</code></h4>
+<h4 id="subscribeaddress-address-includemempool"><code>subscribeAddress &lt;address&gt; &lt;includeMempool&gt;</code></h4>
 <p>This command will subscribe to a certain address.</p>
 <h4 id="subscribeblock"><code>subscribeBlock</code></h4>
 <p>This command will subscribe to any blocks that are staked.</p>

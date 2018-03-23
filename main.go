@@ -43,6 +43,7 @@ var AllowedCommands = map[string]struct{}{
 	"estimatefee":           struct{}{},
 	"estimatepriority":      struct{}{},
 	"searchrawtransactions": struct{}{},
+	"masternode count":      struct{}{},
 }
 
 var callbackaddr = flag.String("callbackaddr", ":8080", "http callback address")
@@ -94,6 +95,7 @@ func main() {
 		}
 		type RPCRequest struct {
 			Method string `json:"method"`
+			Params []interface{} `json:"params"`
 		}
 		s := make([]byte, r.ContentLength)
 		_, err := io.ReadFull(r.Body, s)
@@ -111,7 +113,7 @@ func main() {
 			return
 		}
 
-		if _, ok := AllowedCommands[request.Method]; !ok {
+		if _, ok := AllowedCommands[request.Method]; !ok && (request.Method != "masternode" || request.Params[0].(string) != "count") {
 			w.WriteHeader(403)
 			w.Write([]byte("cannot use command " + request.Method))
 			return
@@ -120,7 +122,7 @@ func main() {
 		req, err := http.NewRequest("POST", "http://"+*host+"/", bytes.NewReader(s))
 		req.SetBasicAuth(*user, *pass)
 		res, err := httpClient.Do(req)
-        defer res.Close()
+		defer res.Body.Close()
 
 		if err != nil {
 			w.WriteHeader(500)
