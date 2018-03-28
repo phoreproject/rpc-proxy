@@ -152,7 +152,7 @@ func main() {
 		log.Println("Started callback listener on: ", callbackaddr)
 	}()
 
-	log.Println("Starting public listener...")
+	log.Println("Starting public listener on", *pubaddr)
 	err := http.ListenAndServe(*pubaddr, publicServer)
 	if err != nil {
 		log.Fatal("error starting public listener: ", err)
