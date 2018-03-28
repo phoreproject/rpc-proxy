@@ -44,6 +44,7 @@ var AllowedCommands = map[string]struct{}{
 	"estimatepriority":      struct{}{},
 	"searchrawtransactions": struct{}{},
 	"masternode count":      struct{}{},
+	"gettransaction":        struct{}{},
 }
 
 var callbackaddr = flag.String("callbackaddr", ":8080", "http callback address")
@@ -94,7 +95,7 @@ func main() {
 			return
 		}
 		type RPCRequest struct {
-			Method string `json:"method"`
+			Method string        `json:"method"`
 			Params []interface{} `json:"params"`
 		}
 		s := make([]byte, r.ContentLength)
